@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// enum
+
+enum ChatRoomType {
+  PERSONAL
+  GROUP
+}
+
+// model
+model User {
+  id Int @id @default(autoincrement())
+  account String @unique
+  password String 
+  name String
+  description String?
+  createAt DateTime @default(now())
+
+  friends Friend[]
+  chatMember ChatMember[]
+  message Message[]
+}
+
+model Friend {
+  id Int @id @default(autoincrement())
+  userId Int
+  user User @relation(fields: [userId],references: [id])
+  friendId Int
+  status Int
+  createAt DateTime @default(now())
+}
+
+model ChatRoom {
+  id Int @id @default(autoincrement())
+  type ChatRoomType
+  name String
+  createAt DateTime @default(now())
+
+  chatMembers ChatMember[]
+  message Message[]
+}
+
+model ChatMember {
+  id Int @id @default(autoincrement())
+  chatRoomId Int 
+  ChatRoom ChatRoom @relation(fields: [chatRoomId],references: [id])
+  userId Int
+  user User @relation(fields: [userId],references: [id])
+  createAt DateTime @default(now())
+}
+
+model Message {
+  id Int @id @default(autoincrement())
+  chatRoomId Int
+  chatRoom ChatRoom @relation(fields: [chatRoomId],references: [id])
+  userId Int
+  user User @relation(fields: [userId],references: [id])
+  content String
+  createAt DateTime @default(now())
+}
