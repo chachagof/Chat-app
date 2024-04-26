@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
@@ -13,11 +14,14 @@ const userServices = {
 
       if (password !== confirmPassword) throw new Error("密碼錯誤");
 
+      const salt = await bcrypt.genSalt(10);
+      const hash = await bcrypt.hash(password, salt);
+
       const createUser = await prisma.user.create({
         data: {
           name,
           account,
-          password,
+          password: hash,
         },
       });
 
@@ -33,17 +37,9 @@ const userServices = {
   },
   signin: async (req, cb) => {
     try {
-      const { account, password } = req.body;
-      if (!account || !password) throw new Error("請輸入帳號密碼");
-      const findUser = await prisma.user.findUnique({
-        where: { account },
-      });
-      if (!findUser) throw new Error("此用戶尚未註冊");
+      if (!req.user) throw new Error("身分驗證失敗");
 
-      const pass = findUser.password === password;
-      if (!pass) throw new Error("帳號密碼不一致");
-
-      const userInfo = req.user;
+      const userInfo = { ...req.user };
       delete userInfo.password;
       const token = jwt.sign(req.user, process.env.JWT_SECRET, {
         expiresIn: "7d",

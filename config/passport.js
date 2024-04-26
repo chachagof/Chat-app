@@ -2,6 +2,7 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import { PrismaClient } from "@prisma/client";
+import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient();
 
@@ -12,8 +13,10 @@ passport.use(
       try {
         const user = await prisma.user.findUnique({ where: { account } });
         if (!user) done(null, false, { message: "此用戶未註冊" });
-        if (user.password !== password)
-          done(null, false, { message: "帳號或密碼錯誤" });
+
+        const checkPassword = await bcrypt.compare(password, user.password)
+
+        if (!checkPassword) done(null, false, { message: "帳號或密碼錯誤" });
         return done(null, user);
       } catch (err) {
         return done(null, false);
