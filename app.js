@@ -1,8 +1,8 @@
 import express from 'express';
 import session from 'express-session';
 import dotenv from 'dotenv';
-import apis from './apis/index';
-import passport from './config/passport';
+import apis from './apis/index.js';
+import passport from './config/passport.js';
 
 if (process.env.NODE_ENT !== 'production') {
   dotenv.config();

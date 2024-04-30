@@ -1,7 +1,7 @@
 import express from 'express';
-import userController from '../controllers/userController';
-import passport from '../config/passport';
-import authenticated from '../middleware/authenticate';
+import userController from '../controllers/userController.js';
+import passport from '../config/passport.js';
+import authenticated from '../middleware/authenticate.js';
 
 const router = express.Router();
 

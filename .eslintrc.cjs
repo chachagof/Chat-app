@@ -5,6 +5,9 @@ module.exports = {
     node: true,
   },
   extends: 'airbnb-base',
+  plugins: [
+    'import',
+  ],
   overrides: [],
   parserOptions: {
     ecmaVersion: 'latest',
@@ -15,6 +18,13 @@ module.exports = {
     'no-unused-expressions': [
       'error',
       { allowShortCircuit: true, allowTernary: true },
+    ],
+    'import/extensions': [
+      'error',
+      'ignorePackages',
+      {
+        js: 'always',
+      },
     ],
   },
 };

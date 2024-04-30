@@ -1,25 +1,50 @@
-import userServices from '../services/userServices';
+import userServices from '../services/userServices.js';
 
 const userController = {
-  register: (req, res, next) => {
-    userServices.register(req, (err, data) => {
-      err ? next(err) : res.json(data);
-    });
+  register: async (req, res, next) => {
+    try {
+      const data = await userServices.register(req.body);
+      return res.json(data);
+    } catch (error) {
+      return next(error);
+    }
   },
-  signin: (req, res, next) => {
-    userServices.signin(req, (err, data) => {
-      err ? next(err) : res.json(data);
-    });
+  signin: async (req, res, next) => {
+    try {
+      const data = await userServices.signin(req);
+      return res.json(data);
+    } catch (error) {
+      return next(error);
+    }
   },
-  getUser: (req, res, next) => {
-    userServices.getUser(req, (err, data) => {
-      err ? next(err) : res.json(data);
-    });
+  getUser: async (req, res, next) => {
+    try {
+      const data = await userServices.getUser(req.params.userId);
+      return res.json(data);
+    } catch (error) {
+      return next(error);
+    }
   },
-  editUser: (req, res, next) => {
-    userServices.editUser(req, (err, data) => {
-      err ? next(err) : res.json(data);
-    });
+  editUser: async (req, res, next) => {
+    try {
+      const {
+        password,
+        confirmPassword,
+        name,
+        description,
+      } = req.body;
+      const { userId } = req.params;
+      const data = await userServices.editUser({
+        password,
+        confirmPassword,
+        name,
+        description,
+        userId,
+      });
+      return res.json(data);
+    } catch (error) {
+      return next(error);
+    }
   },
 };
 
