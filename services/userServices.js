@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import ValidationError from '../errors/validationError.js';
 
 const prisma = new PrismaClient();
 
@@ -9,10 +10,10 @@ const userServices = {
     name, account, password, confirmPassword,
   }) => {
     if (!name || !account || !password || !confirmPassword) {
-      throw new Error('請填寫完整資料');
+      throw new ValidationError('請填寫完整資料', 400);
     }
 
-    if (password !== confirmPassword) throw new Error('密碼錯誤');
+    if (password !== confirmPassword) throw new ValidationError('密碼錯誤', 401);
 
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
@@ -25,7 +26,7 @@ const userServices = {
       },
     });
 
-    if (!createUser) throw new Error('用戶尚未完成建立');
+    if (!createUser) throw new ValidationError('用戶尚未完成建立', 403);
 
     return {
       state: '200',
@@ -33,7 +34,7 @@ const userServices = {
     };
   },
   signin: async ({ user }) => {
-    if (!user) throw new Error('身分驗證失敗');
+    if (!user) throw new ValidationError('身分驗證失敗', 401);
 
     const userInfo = { ...user };
     delete userInfo.password;
@@ -55,7 +56,7 @@ const userServices = {
       where: { id: parseInt(userId, 10) },
     });
 
-    if (!userInfo) throw new Error('查無此用戶');
+    if (!userInfo) throw new ValidationError('查無此用戶', 403);
 
     delete userInfo.password;
 
@@ -74,12 +75,16 @@ const userServices = {
     const userInfo = await prisma.user.findUnique({
       where: { id: parseInt(userId, 10) },
     });
-    if (password !== confirmPassword) throw new Error('密碼不一致');
+    if (password !== confirmPassword) throw new ValidationError('密碼不一致', 403);
 
-    if (!userInfo) throw new Error('查無此用戶');
+    if (!userInfo) throw new ValidationError('查無此用戶', 403);
 
     const updateData = {};
-    if (password) updateData.password = password;
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      const hash = await bcrypt.hash(password, salt);
+      updateData.password = hash;
+    }
     if (name) updateData.name = name;
     if (description) updateData.description = description;
 
