@@ -8,15 +8,15 @@ const prisma = new PrismaClient();
 
 passport.use(
   new LocalStrategy(
-    { usernameField: 'account' },
-    async (account, password, done) => {
+    { usernameField: 'account', passReqToCallback: true },
+    async (req, account, password, done) => {
       try {
         const user = await prisma.user.findUnique({ where: { account } });
-        if (!user) done(null, false, { message: '此用戶未註冊' });
+        if (!user) done({ message: '此用戶未註冊', statusCode: 403 });
 
         const checkPassword = await bcrypt.compare(password, user.password);
 
-        if (!checkPassword) done(null, false, { message: '帳號或密碼錯誤' });
+        if (!checkPassword) done({ message: '帳號或密碼錯誤', statusCode: 401 });
         return done(null, user);
       } catch (err) {
         return done(null, false);

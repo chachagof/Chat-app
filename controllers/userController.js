@@ -1,10 +1,11 @@
 import userServices from '../services/userServices.js';
+import { successResponse } from '../utils/responseTemplate.js';
 
 const userController = {
   register: async (req, res, next) => {
     try {
       const data = await userServices.register(req.body);
-      return res.json(data);
+      return successResponse(res, data);
     } catch (error) {
       return next(error);
     }
@@ -12,7 +13,7 @@ const userController = {
   signin: async (req, res, next) => {
     try {
       const data = await userServices.signin(req);
-      return res.json(data);
+      return successResponse(res, data);
     } catch (error) {
       return next(error);
     }
@@ -20,7 +21,7 @@ const userController = {
   getUser: async (req, res, next) => {
     try {
       const data = await userServices.getUser(req.params.userId);
-      return res.json(data);
+      return successResponse(res, data);
     } catch (error) {
       return next(error);
     }
@@ -41,7 +42,7 @@ const userController = {
         description,
         userId,
       });
-      return res.json(data);
+      return successResponse(res, data);
     } catch (error) {
       return next(error);
     }

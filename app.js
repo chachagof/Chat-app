@@ -3,6 +3,7 @@ import session from 'express-session';
 import dotenv from 'dotenv';
 import apis from './apis/index.js';
 import passport from './config/passport.js';
+import errorHandler from './middleware/errorHandler.js';
 
 if (process.env.NODE_ENT !== 'production') {
   dotenv.config();
@@ -22,6 +23,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 app.use('/api', apis);
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`It's listen on http://localhost:${PORT}`);
