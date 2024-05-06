@@ -20,13 +20,28 @@ router.post(
 router.get('/users/:userId', authenticated, userController.getUser);
 router.put('/users/:userId', authenticated, userController.editUser);
 
+// get friendship
+router.get(
+  '/friendship/:friendId',
+  authenticated,
+  friendshipController.getFriendship,
+);
+
 // get friendships
-router.get('/friendship', authenticated, friendshipController.getFriendship);
+router.get(
+  '/friendship',
+  authenticated,
+  friendshipController.getFriendships,
+);
 
 // change friendship
-router.post('/friendship', authenticated, friendshipController.changeFriendship);
+router.post('/friendship/:friendId', authenticated, friendshipController.changeFriendship);
 
 // delete friendship
-router.delete('/friendship', authenticated, friendshipController.deleteFriendship);
+router.delete(
+  '/friendship/:friendId',
+  authenticated,
+  friendshipController.deleteFriendship,
+);
 
 export default router;
