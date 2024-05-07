@@ -3,6 +3,7 @@ import userController from '../controllers/userController.js';
 import friendshipController from '../controllers/friendshipController.js';
 import passport from '../config/passport.js';
 import authenticated from '../middleware/authenticate.js';
+import chatRoomController from '../controllers/chatRoomController.js';
 
 const router = express.Router();
 
@@ -42,6 +43,12 @@ router.delete(
   '/friendship/:friendId',
   authenticated,
   friendshipController.deleteFriendship,
+);
+
+router.post(
+  '/chatRoom',
+  authenticated,
+  chatRoomController.create,
 );
 
 export default router;
