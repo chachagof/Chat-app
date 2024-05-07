@@ -5,9 +5,11 @@ export function successResponse(res, data, statusCode = 200) {
   });
 }
 
-export function errorResponse(res, errorMessage, statusCode = 500) {
-  res.status(statusCode).json({
+export function errorResponse(res, err) {
+  const { statusCode, errorCode, message } = err;
+  res.status(statusCode || 500).json({
     success: false,
-    error: errorMessage,
+    error: errorCode ? message : 'Internal Server Error',
+    errorCode: errorCode || '-1',
   });
 }
