@@ -1,10 +1,7 @@
-import ValidationError from '../errors/validationError.js';
+/* eslint-disable no-unused-vars */
 import { errorResponse } from '../utils/responseTemplate.js';
 
-/* eslint-disable-next-line no-unused-vars */
 export default function errorHandler(err, req, res, next) {
-  if (err instanceof ValidationError) {
-    return errorResponse(res, err.message, err.statusCode);
-  }
-  return errorResponse(res, err.message, err.statusCode);
+  console.log(err.stack);
+  return errorResponse(res, err);
 }
