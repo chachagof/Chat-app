@@ -29,8 +29,8 @@ const userServices = {
     if (!createUser) throw new ValidationError('用戶尚未完成建立', 403);
 
     return {
-      state: '200',
-      message: '用戶已成功建立',
+      statusCode: 201,
+      data: { message: '用戶已成功建立' },
     };
   },
   signin: async ({ user }) => {
@@ -43,9 +43,9 @@ const userServices = {
     });
 
     return {
-      state: '200',
-      message: '登入成功',
+      statusCode: 200,
       data: {
+        message: '登入成功',
         user: userInfo,
         token,
       },
@@ -61,7 +61,7 @@ const userServices = {
     delete userInfo.password;
 
     return {
-      state: '200',
+      statusCode: 200,
       data: userInfo,
     };
   },
@@ -94,8 +94,8 @@ const userServices = {
     });
 
     return {
-      state: '200',
-      message: '用戶資料更新成功',
+      statusCode: 200,
+      data: { message: '用戶資料更新成功' },
     };
   },
 };
