@@ -4,7 +4,11 @@ import { successResponse } from '../utils/responseTemplate.js';
 const friendshipController = {
   getFriendship: async (req, res, next) => {
     try {
-      const responseData = await friendshipService.getFriendship(req);
+      const userId = parseInt(req.user.id, 10);
+      const friendId = parseInt(req.params.friendId, 10);
+
+      const responseData = await friendshipService.getFriendship(userId, friendId);
+
       const { data, statusCode } = responseData;
       return successResponse(res, data, statusCode);
     } catch (error) {
@@ -13,7 +17,10 @@ const friendshipController = {
   },
   getFriendships: async (req, res, next) => {
     try {
-      const responseData = await friendshipService.getFriendships(req);
+      const userId = parseInt(req.user.id, 10);
+
+      const responseData = await friendshipService.getFriendships(userId);
+
       const { data, statusCode } = responseData;
       return successResponse(res, data, statusCode);
     } catch (error) {
@@ -22,7 +29,12 @@ const friendshipController = {
   },
   changeFriendship: async (req, res, next) => {
     try {
-      const responseData = await friendshipService.changeFriendship(req);
+      const userId = parseInt(req.user.id, 10);
+      const friendId = parseInt(req.params.friendId, 10);
+      const friendStatus = parseInt(req.body.friendStatus, 10);
+
+      const responseData = await friendshipService.changeFriendship(userId, friendId, friendStatus);
+
       const { data, statusCode } = responseData;
       return successResponse(res, data, statusCode);
     } catch (error) {
@@ -31,7 +43,11 @@ const friendshipController = {
   },
   deleteFriendship: async (req, res, next) => {
     try {
-      const responseData = await friendshipService.deleteFriendship(req);
+      const userId = parseInt(req.user.id, 10);
+      const friendId = parseInt(req.params.friendId, 10);
+
+      const responseData = await friendshipService.deleteFriendship(userId, friendId);
+
       const { data, statusCode } = responseData;
       return successResponse(res, data, statusCode);
     } catch (error) {

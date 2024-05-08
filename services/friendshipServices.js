@@ -7,19 +7,17 @@ const friendStatusList = {
 };
 
 const friendshipService = {
-  getFriendship: async (req) => {
-    const userId = parseInt(req.user.id, 10);
-    const friendId = parseInt(req.params.friendId, 10);
-    const friendship = await prisma.friend.findMany({ where: { userId, friendId } });
+  getFriendship: async (userId, friendId) => {
+    const friendship = await prisma.friend.findMany({
+      where: { userId, friendId },
+    });
     if (!friendship[0]) throw new Error('尚未建立好友關係');
     return {
       statusCode: 200,
       data: friendship,
     };
   },
-  getFriendships: async (req) => {
-    const { user } = req;
-    const userId = parseInt(user.id, 10);
+  getFriendships: async (userId) => {
     const friendships = await prisma.friend.findMany({ where: { userId } });
     if (!friendships) throw new Error('此用戶尚未擁有好友');
     return {
@@ -27,14 +25,11 @@ const friendshipService = {
       data: friendships,
     };
   },
-  changeFriendship: async (req) => {
-    // 所需資料
-    const userId = parseInt(req.user.id, 10);
-    const friendId = parseInt(req.params.friendId, 10);
-    const friendStatus = parseInt(req.body.friendStatus, 10);
-
+  changeFriendship: async (userId, friendId, friendStatus) => {
     // 尋找好友
-    const friendship = await prisma.friend.findMany({ where: { userId, friendId } });
+    const friendship = await prisma.friend.findMany({
+      where: { userId, friendId },
+    });
 
     // 新增好友狀態
     if (!friendship[0]) {
@@ -72,10 +67,10 @@ const friendshipService = {
       data: { message: '完成好友狀態變更' },
     };
   },
-  deleteFriendship: async (req) => {
-    const userId = parseInt(req.user.id, 10);
-    const friendId = parseInt(req.params.friendId, 10);
-    const deleteFriendship = await prisma.friend.deleteMany({ where: { userId, friendId } });
+  deleteFriendship: async (userId, friendId) => {
+    const deleteFriendship = await prisma.friend.deleteMany({
+      where: { userId, friendId },
+    });
 
     if (deleteFriendship.count === 0) throw new Error('尚未加入好友');
 
