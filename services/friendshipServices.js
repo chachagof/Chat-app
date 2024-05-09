@@ -1,4 +1,6 @@
 import { PrismaClient } from '@prisma/client';
+import ValidationError from '../errors/ValidationError.js';
+import ResourceDuplicateError from '../errors/ResourceDuplicateError.js';
 
 const prisma = new PrismaClient();
 const friendStatusList = {
@@ -11,7 +13,7 @@ const friendshipService = {
     const friendship = await prisma.friend.findMany({
       where: { userId, friendId },
     });
-    if (!friendship[0]) throw new Error('尚未建立好友關係');
+    if (!friendship[0]) throw new ValidationError('尚未建立好友關係', 404);
     return {
       statusCode: 200,
       data: friendship,
@@ -19,7 +21,7 @@ const friendshipService = {
   },
   getFriendships: async (userId) => {
     const friendships = await prisma.friend.findMany({ where: { userId } });
-    if (!friendships) throw new Error('此用戶尚未擁有好友');
+    if (!friendships) throw new ValidationError('此用戶尚未擁有好友', 404);
     return {
       statusCode: 200,
       data: friendships,
@@ -48,8 +50,8 @@ const friendshipService = {
 
     // 確認變更狀態
     if (friendship[0].status === friendStatus) {
-      if (friendStatusList[friendStatus] === 'follow') throw new Error('已加為好友');
-      if (friendStatusList[friendStatus] === 'block') throw new Error('已完成封鎖');
+      if (friendStatusList[friendStatus] === 'follow') throw new ResourceDuplicateError('已加為好友', 409);
+      if (friendStatusList[friendStatus] === 'block') throw new ResourceDuplicateError('已完成封鎖', 409);
     }
 
     // 更改好友狀態
@@ -72,7 +74,7 @@ const friendshipService = {
       where: { userId, friendId },
     });
 
-    if (deleteFriendship.count === 0) throw new Error('尚未加入好友');
+    if (deleteFriendship.count === 0) throw new ValidationError('尚未加入好友', 404);
 
     return {
       statusCode: 200,
