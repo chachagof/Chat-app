@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import apis from './apis/index.js';
 import passport from './config/passport.js';
 import errorHandler from './middleware/errorHandler.js';
+import logger from './logger/logger.js';
 
 if (process.env.NODE_ENT !== 'production') {
   dotenv.config();
@@ -26,5 +27,5 @@ app.use('/api', apis);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`It's listen on http://localhost:${PORT}`);
+  logger.info(`It's listen on http://localhost:${PORT}`);
 });

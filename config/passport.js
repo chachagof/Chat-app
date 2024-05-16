@@ -3,6 +3,7 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import ValidationError from '../errors/ValidationError.js';
 
 const prisma = new PrismaClient();
 
@@ -12,14 +13,14 @@ passport.use(
     async (req, account, password, done) => {
       try {
         const user = await prisma.user.findUnique({ where: { account } });
-        if (!user) done({ message: '此用戶未註冊', statusCode: 403 });
+        if (!user) done(new ValidationError('此用戶未註冊', 403));
 
         const checkPassword = await bcrypt.compare(password, user.password);
 
-        if (!checkPassword) done({ message: '帳號或密碼錯誤', statusCode: 401 });
+        if (!checkPassword) done(new ValidationError('帳號或密碼錯誤', 401));
         return done(null, user);
       } catch (err) {
-        return done(null, false);
+        return done(err, false);
       }
     },
   ),
@@ -36,7 +37,7 @@ passport.use(
       const user = await prisma.user.findUnique({
         where: { id: jwtPayload.id },
       });
-      if (!user) done(null, false, { message: '驗證失敗' });
+      if (!user) done(new ValidationError('驗證失敗', 401));
       return done(null, user);
     } catch (error) {
       return done(error, null);
