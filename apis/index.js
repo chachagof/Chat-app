@@ -45,10 +45,18 @@ router.delete(
   friendshipController.deleteFriendship,
 );
 
+// create chatRoom
 router.post(
   '/chatRoom',
   authenticated,
   chatRoomController.create,
+);
+
+// connect chatRoom
+router.post(
+  '/chatRoom/:chatRoomId',
+  authenticated,
+  chatRoomController.connectChatRoom,
 );
 
 export default router;
