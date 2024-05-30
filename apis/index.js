@@ -59,4 +59,11 @@ router.post(
   chatRoomController.connectChatRoom,
 );
 
+// get chatRoom
+router.get(
+  '/chatRoom/:chatRoomId',
+  authenticated,
+  chatRoomController.getChatRoom,
+);
+
 export default router;

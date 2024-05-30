@@ -1,4 +1,4 @@
-import { createChatRoom, connectChatRoom } from '../services/chatRoomServices.js';
+import { createChatRoom, connectChatRoom, getChatRoom } from '../services/chatRoomServices.js';
 import { successResponse } from '../utils/responseTemplate.js';
 
 const chatRoomController = {
@@ -17,8 +17,20 @@ const chatRoomController = {
   },
   connectChatRoom: async (req, res, next) => {
     try {
-      const result = await connectChatRoom(req);
-      return successResponse(res, result);
+      const { chatRoomId } = req.params;
+      const { id: userId } = req.user;
+      const data = await connectChatRoom({ chatRoomId, userId });
+      return successResponse(res, data);
+    } catch (error) {
+      return next(error);
+    }
+  },
+  getChatRoom: async (req, res, next) => {
+    try {
+      const { chatRoomId } = req.params;
+      const { id: userId } = req.user;
+      const data = await getChatRoom({ chatRoomId, userId });
+      return successResponse(res, data);
     } catch (error) {
       return next(error);
     }

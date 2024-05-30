@@ -79,13 +79,11 @@ export async function createChatRoom({
   return createResult;
 }
 
-export async function connectChatRoom(req) {
-  const { chatRoomId } = req.params;
-  const { user } = req;
-  const id = parseInt(chatRoomId, 10);
+export async function connectChatRoom({ chatRoomId, userId }) {
+  const NumericChatRoomId = parseInt(chatRoomId, 10);
 
   // 確認房間
-  const joinRoom = await prisma.chatRoom.findUnique({ where: { id } });
+  const joinRoom = await prisma.chatRoom.findUnique({ where: { id: NumericChatRoomId } });
 
   if (!joinRoom) throw new ResourceNotFoundError('尚未建立聯繫', 404);
 
@@ -101,8 +99,8 @@ export async function connectChatRoom(req) {
   if (joinRoom.type === ChatRoomType.PERSONAL) {
     const isMember = await prisma.chatMember.findMany({
       where: {
-        chatRoomId: id,
-        userId: user.id,
+        chatRoomId: NumericChatRoomId,
+        userId,
       },
     });
 
@@ -116,16 +114,16 @@ export async function connectChatRoom(req) {
   // 確認房間類型-群組
   const checkGroupMember = await prisma.chatMember.findMany({
     where: {
-      chatRoomId: id,
-      userId: user.id,
+      chatRoomId: NumericChatRoomId,
+      userId,
     },
   });
 
   if (checkGroupMember.length === 0) {
     const joinGroupChatRoom = await prisma.chatMember.create({
       data: {
-        chatRoomId: id,
-        userId: user.id,
+        chatRoomId: NumericChatRoomId,
+        userId,
       },
     });
 
@@ -135,4 +133,22 @@ export async function connectChatRoom(req) {
   resData.validation = true;
 
   return resData;
+}
+
+export async function getChatRoom({ chatRoomId, userId }) {
+  const NumericChatRoomId = parseInt(chatRoomId, 10);
+
+  // 確認聊天室
+  const data = await prisma.chatRoom.findUnique({ where: { id: NumericChatRoomId } });
+
+  if (!data) throw new ResourceNotFoundError('查無此聊天室', 404);
+
+  // 確認資格
+  const member = await prisma.chatMember.findMany({ where: { chatRoomId: NumericChatRoomId } });
+
+  const isMember = member.some((m) => m.userId === userId);
+
+  if (!isMember) throw new ValidationError('此用戶不再聊天室內，無法查詢', 400);
+
+  return data;
 }
