@@ -1,0 +1,6 @@
+node_modules
+*.log
+*.gz
+# Keep environment variables out of version control
+.vscode
+

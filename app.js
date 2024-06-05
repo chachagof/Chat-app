@@ -31,6 +31,6 @@ app.use(errorHandler);
 
 initializeSocketIo(server);
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   logger.info(`It's listen on http://localhost:${PORT}`);
 });
