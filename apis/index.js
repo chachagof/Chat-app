@@ -4,6 +4,7 @@ import friendshipController from '../controllers/friendshipController.js';
 import passport from '../config/passport.js';
 import authenticated from '../middleware/authenticate.js';
 import chatRoomController from '../controllers/chatRoomController.js';
+import messageController from '../controllers/messageController.js';
 
 const router = express.Router();
 
@@ -64,6 +65,13 @@ router.get(
   '/chatRoom/:chatRoomId',
   authenticated,
   chatRoomController.getChatRoom,
+);
+
+// send message
+router.post(
+  '/chatRoom/:chatRoomId/message',
+  authenticated,
+  messageController.sendMessage,
 );
 
 export default router;
