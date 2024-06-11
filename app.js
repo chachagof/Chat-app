@@ -8,7 +8,7 @@ import errorHandler from './middleware/errorHandler.js';
 import logger from './logger/logger.js';
 import initializeSocketIo from './services/socketIoServices.js';
 
-if (process.env.NODE_ENT !== 'production') {
+if (process.env.NODE_ENV !== 'production') {
   dotenv.config();
 }
 

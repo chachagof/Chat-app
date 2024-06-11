@@ -7,6 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js",
+    "start":"pm2 start ecosystem.config.cjs --env production",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
