@@ -10,6 +10,14 @@ const messageController = {
       return next(error);
     }
   },
+  getMessage: async (req, res, next) => {
+    try {
+      const data = await messageServices.getMessage(req);
+      return successResponse(res, data);
+    } catch (error) {
+      return next(error);
+    }
+  },
 };
 
 export default messageController;

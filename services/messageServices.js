@@ -36,6 +36,38 @@ const messageServices = {
       data: { message: '完成訊息傳送' },
     };
   },
+  getMessage: async (req) => {
+    const { chatRoomId } = req.params;
+    const { id } = req.user;
+    const numericChatRoomId = parseInt(chatRoomId, 10);
+
+    const checkRoom = await prisma.chatRoom.findUnique({
+      where: {
+        id: numericChatRoomId,
+      },
+      include: {
+        chatMembers: true,
+      },
+    });
+
+    if (!checkRoom) throw new ResourceNotFoundError('查無此房間');
+
+    const chatMember = checkRoom.chatMembers;
+    const checkMember = chatMember.find((member) => member.userId === id);
+
+    if (!checkMember) throw new ValidationError('無權限查閱訊息');
+
+    const chatRoomMessage = await prisma.message.findMany({
+      where: {
+        chatRoomId: numericChatRoomId,
+      },
+    });
+
+    return {
+      statusCode: 200,
+      data: chatRoomMessage,
+    };
+  },
 };
 
 export default messageServices;

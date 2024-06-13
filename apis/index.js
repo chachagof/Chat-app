@@ -74,4 +74,11 @@ router.post(
   messageController.sendMessage,
 );
 
+// get message
+router.get(
+  '/chatRoom/:chatRoomId/message',
+  authenticated,
+  messageController.getMessage,
+);
+
 export default router;
