@@ -81,4 +81,11 @@ router.get(
   messageController.getMessage,
 );
 
+// delete message
+router.delete(
+  '/chatRoom/:chatRoomId/message/:messageId',
+  authenticated,
+  messageController.deleteMessage,
+);
+
 export default router;
