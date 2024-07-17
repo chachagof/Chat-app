@@ -4,6 +4,7 @@ import friendshipController from '../controllers/friendshipController.js';
 import passport from '../config/passport.js';
 import authenticated from '../middleware/authenticate.js';
 import chatRoomController from '../controllers/chatRoomController.js';
+import messageController from '../controllers/messageController.js';
 
 const router = express.Router();
 
@@ -45,10 +46,46 @@ router.delete(
   friendshipController.deleteFriendship,
 );
 
+// create chatRoom
 router.post(
   '/chatRoom',
   authenticated,
   chatRoomController.create,
+);
+
+// connect chatRoom
+router.post(
+  '/chatRoom/:chatRoomId',
+  authenticated,
+  chatRoomController.connectChatRoom,
+);
+
+// get chatRoom
+router.get(
+  '/chatRoom/:chatRoomId',
+  authenticated,
+  chatRoomController.getChatRoom,
+);
+
+// send message
+router.post(
+  '/chatRoom/:chatRoomId/message',
+  authenticated,
+  messageController.sendMessage,
+);
+
+// get message
+router.get(
+  '/chatRoom/:chatRoomId/message',
+  authenticated,
+  messageController.getMessage,
+);
+
+// delete message
+router.delete(
+  '/chatRoom/:chatRoomId/message/:messageId',
+  authenticated,
+  messageController.deleteMessage,
 );
 
 export default router;
